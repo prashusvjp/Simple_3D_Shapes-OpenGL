@@ -97,7 +97,7 @@ void onMouse(int button, int state, int x, int y) {
 			angle += deltaAngle;
 			xOrigin = -1;
 		}
-		else {// state = GLUT_DOWN
+		else {
 			xOrigin = x;
 		}
 	}
@@ -126,12 +126,6 @@ void Face(GLPoint point1, GLPoint point2, GLPoint point3, GLPoint point4) {
 
 	glColor3f(0.5, 0.3, 1.0);
 	drawTriangle(point1, point2, point3);
-
-	/*glColor3f(0.0, 0.9, 0.0);
-	drawTriangle(point3, point2, midPoint);
-
-	glColor3f(0.9, 0.85, 0.0);
-	drawTriangle(point1, point2, midPoint);*/
 }
 
 void cuboid() {
@@ -185,54 +179,46 @@ void squarePyramid() {
 }
 
 void display() {
-	// Clear your Window
 	glClearStencil(0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glPushMatrix();
-	glLoadIdentity();
-	glTranslatef(0.0, 0.0, -5.0);
-	gluLookAt(camx, camy, camz, 0, 0, 0, 0, 1, 0);
-	glRotatef(90, 0, 1, 0);
-	glRotatef(xrot, 1, 0, 0);
-	glRotatef(yrot, 0, 1, 0);
-	glRotatef(zrot, 0, 0, 1);
-	glPushMatrix();
-	glScalef(sScale, sScale, sScale);
-	glRotatef(sxrot, 1, 0, 0);
-	glRotatef(syrot, 0, 1, 0);
-	glRotatef(szrot, 0, 0, 1);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	squarePyramid();
-	glPopMatrix();
-	glPushMatrix();
-	glScalef(cScale, cScale, cScale);
-	glRotatef(90, 0, 1, 0);
-	glRotatef(cxrot, 1, 0, 0);
-	glRotatef(cyrot, 0, 1, 0);
-	glRotatef(czrot, 0, 0, 1);
-	glStencilFunc(GL_ALWAYS, 2, 0xFF);
-	cuboid();
-	glPopMatrix();
-	glColor3f(1, 0, 0);
-	glColor3f(1, 1, 1);
-	glStencilFunc(GL_ALWAYS, 3, 0xFF);
-	glutWireSphere(1.5, 13, 10);
-
-	//gluLookAt(camX * 2, 0.5, camZ, 0, 0, 0, 0, 1, 0);
+		glLoadIdentity();
+		glTranslatef(0.0, 0.0, -5.0);
+		gluLookAt(camx, camy, camz, 0, 0, 0, 0, 1, 0);
+		glRotatef(90, 0, 1, 0);
+		glRotatef(xrot, 1, 0, 0);
+		glRotatef(yrot, 0, 1, 0);
+		glRotatef(zrot, 0, 0, 1);
+		glPushMatrix();
+			glScalef(sScale, sScale, sScale);
+			glRotatef(sxrot, 1, 0, 0);
+			glRotatef(syrot, 0, 1, 0);
+			glRotatef(szrot, 0, 0, 1);
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+			squarePyramid();
+		glPopMatrix();
+		glPushMatrix();
+			glScalef(cScale, cScale, cScale);
+			glRotatef(90, 0, 1, 0);
+			glRotatef(cxrot, 1, 0, 0);
+			glRotatef(cyrot, 0, 1, 0);
+			glRotatef(czrot, 0, 0, 1);
+			glStencilFunc(GL_ALWAYS, 2, 0xFF);
+			cuboid();
+		glPopMatrix();
+		glColor3f(1, 0, 0);
+		glColor3f(1, 1, 1);
+		glStencilFunc(GL_ALWAYS, 3, 0xFF);
+		glutWireSphere(1.5, 13, 10);
 	glPopMatrix();
 
 	glutSwapBuffers();
 }
 
 void mouseMove(int x, int y) {
-
-	// this will only be true when the left button is down
 	if (xOrigin >= 0) {
-
-		// update deltaAngle
 		deltaAngle = (x - xOrigin) * 0.001f;
 
-		// update camera's direction
 		camx = sin(angle + deltaAngle);
 		camz = -cos(angle + deltaAngle);
 		glutPostRedisplay();
@@ -242,29 +228,24 @@ void mouseMove(int x, int y) {
 
 void reshapeFunc(int x, int y)
 {
-	if (y == 0 || x == 0) return;  //Nothing is visible then, so return
-	//Set a new projection matrix
+	if (y == 0 || x == 0) return; 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(40.0, (GLdouble)x / (GLdouble)y, 0.5, 20.0);
 	glMatrixMode(GL_MODELVIEW);
 	glViewport(0, 0, x, y);
-	glLoadIdentity();//Use the whole window for rendering
-}
+	glLoadIdentity();
 
 int main(int argc, char* argv[])
 {
-	// Step1:  initialize GLUT using the command line parameters
+	
 	glutInit(&argc, argv);
-
-
 	glutInitWindowSize(1024, 720);
 	glutInitWindowPosition(250, 50);
-	glClearStencil(0);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE | GL_STENCIL_BUFFER_BIT);
 	glColor3f(0.5, 0.5, 0.5);
 	glClearColor(0, 0, 0, 1);
-	glutCreateWindow("Hello World! Display a Point");
+	glutCreateWindow("Fundamentals of Virtual and Augmented Reality- Assignment 1");
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -278,9 +259,7 @@ int main(int argc, char* argv[])
 	glutMotionFunc(mouseMove);
 	glutSpecialFunc(specialKeys);
 
-
-	//Setup projection window
-	glMatrixMode(GL_PROJECTION); // Select Projection Matrix
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glPointSize(1.0);
