@@ -7,10 +7,12 @@ struct GLPoint {
 	GLfloat x, y, z;
 };
 
-GLuint index = 3;
+GLuint index = 0,cxs=0,cys=0,czs=0,sxs=1,sys=1,szs=0;
+GLfloat window_width = 1024;
+GLfloat window_height = 720;
 GLfloat camx = 0, camy = 0, camz = 1, sScale = 1, cScale = 1, angle = 0,
 xrot = 0, yrot = 0, zrot = 0, xOrigin = -1, lx = 0, lz = 0, deltaAngle = 0,
-sxrot = 0, syrot = 0, szrot = 0,
+sxrot = 0, syrot = 0, szrot = 0,sxt=0.3,syt=0.4,szt=0.3,cxt=0,cyt=0,czt=0,
 cxrot = 0, cyrot = 0, czrot = 0;
 
 void specialKeys(int key, int x, int y) {
@@ -69,15 +71,15 @@ void handleKeys(unsigned char key, int x, int y) {
 		break;
 	case 'S':
 		if (index == 1 && sScale < 3)
-			sScale++;
+			sScale+=0.5;
 		else if (index == 2 && cScale < 3)
-			cScale++;
+			cScale+=0.5;
 		break;
 	case 's':
 		if (index == 1 && sScale > 1)
-			sScale--;
+			sScale-=0.5;
 		else if (index == 2 && cScale > 1)
-			cScale--;
+			cScale-=0.5;
 		break;
 	}
 	glLoadIdentity();
@@ -86,11 +88,8 @@ void handleKeys(unsigned char key, int x, int y) {
 
 void onMouse(int button, int state, int x, int y) {
 	if (state == GLUT_DOWN && button == 0) {
-
-		GLfloat window_width = glutGet(GLUT_WINDOW_WIDTH);
-		GLfloat window_height = glutGet(GLUT_WINDOW_HEIGHT);
-
 		glReadPixels(x, window_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+		printf("Index= %d",index);
 	}
 	if (button == 2) {
 		if (state == GLUT_UP) {
@@ -121,10 +120,10 @@ void drawTriangle(GLPoint point1, GLPoint point2, GLPoint point3) {
 }
 
 void Face(GLPoint point1, GLPoint point2, GLPoint point3, GLPoint point4) {
-	glColor3f(1.0, 0.3, 0.5);
+	glColor3f(1.0, 0.3, 0.3);
 	drawTriangle(point1, point4, point3);
 
-	glColor3f(0.5, 0.3, 1.0);
+	glColor3f(0.9, 0.2, 1.0);
 	drawTriangle(point1, point2, point3);
 }
 
@@ -178,6 +177,63 @@ void squarePyramid() {
 
 }
 
+GLfloat getDirections(GLfloat p,int index, int axis) {
+	switch (index) {
+	case 1:
+		if (axis == 1)
+			if (sxs)
+				return p + 0.001;
+			else
+				return p - 0.001;
+		else if(axis == 1)
+			if (sys)
+				return p + 0.001;
+			else
+				return p - 0.001;
+		else
+			if (szs)
+				return p + 0.001;
+			else
+				return p - 0.001;
+		break;
+	case 2:
+		if (axis == 1)
+			if (cxs)
+				return p + 0.001;
+			else
+				return p - 0.001;
+		else
+			if (cys)
+				return p + 0.001;
+			else
+				return p - 0.001;
+		break;
+	}
+}
+
+GLfloat getOppositeDirections(GLfloat p,int index,int axis) {
+	switch (index) {
+	case 1:
+		if (axis == 1)
+			sxs = !sxs;
+		else if (axis == 2)
+			sys = !sys;
+		else
+			szs = !szs;
+		break;
+	case 2:
+		if (axis == 1)
+			cxs = !cxs;
+		else
+			cys = !cys;
+		break;
+	}
+	if (p <= 0)
+		return p + 0.001;
+	else
+		return p - 0.001;
+}
+
 void display() {
 	glClearStencil(0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -190,6 +246,7 @@ void display() {
 		glRotatef(yrot, 0, 1, 0);
 		glRotatef(zrot, 0, 0, 1);
 		glPushMatrix();
+			glTranslatef(sxt, syt, szt);
 			glScalef(sScale, sScale, sScale);
 			glRotatef(sxrot, 1, 0, 0);
 			glRotatef(syrot, 0, 1, 0);
@@ -198,8 +255,8 @@ void display() {
 			squarePyramid();
 		glPopMatrix();
 		glPushMatrix();
+			glTranslatef(cxt, cyt, czt);
 			glScalef(cScale, cScale, cScale);
-			glRotatef(90, 0, 1, 0);
 			glRotatef(cxrot, 1, 0, 0);
 			glRotatef(cyrot, 0, 1, 0);
 			glRotatef(czrot, 0, 0, 1);
@@ -213,28 +270,59 @@ void display() {
 	glPopMatrix();
 
 	glutSwapBuffers();
+	
 }
 
 void mouseMove(int x, int y) {
 	if (xOrigin >= 0) {
 		deltaAngle = (x - xOrigin) * 0.001f;
-
 		camx = sin(angle + deltaAngle);
 		camz = -cos(angle + deltaAngle);
 		glutPostRedisplay();
 	}
 }
 
+void idleCallback() {
+	GLint x1 = sqrt(pow((abs(cxt) - 0.1), 2));
+	GLint y1 = sqrt(pow((abs(cyt) - 0), 2));
+	GLint z1 = sqrt(pow((abs(czt) - 0), 2));
+	GLint result = x1 + y1 + z1;
+	if (result < 1.0) {
+		cxt = getDirections(cxt, 2, 1);
+		cyt = getDirections(cxt, 2, 2);
+	}
+	else {
+		cxt = getOppositeDirections(cxt, 2, 1);
+		cyt = getOppositeDirections(cyt, 2, 2);
+	}
+
+	x1 = sqrt(pow((abs(sxt) - 0.1), 2));
+	y1 = sqrt(pow((abs(syt) - 0), 2));
+	z1 = sqrt(pow((abs(szt) - 0), 2));
+	result = x1 + y1 + z1;
+	if (result < 1.0) {
+		sxt = getDirections(sxt, 1, 1);
+		syt = getDirections(syt, 1, 2);
+		szt = getDirections(szt, 1, 3);
+	}
+	else {
+		sxt = getOppositeDirections(sxt, 1, 1);
+		syt = getOppositeDirections(syt, 1, 2);
+		szt = getOppositeDirections(szt,1,3);
+	}
+	glutPostRedisplay();
+}
 
 void reshapeFunc(int x, int y)
 {
-	if (y == 0 || x == 0) return; 
+	if (y == 0 || x == 0) return;
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(40.0, (GLdouble)x / (GLdouble)y, 0.5, 20.0);
 	glMatrixMode(GL_MODELVIEW);
 	glViewport(0, 0, x, y);
 	glLoadIdentity();
+}
 
 int main(int argc, char* argv[])
 {
@@ -258,6 +346,7 @@ int main(int argc, char* argv[])
 	glutMouseFunc(onMouse);
 	glutMotionFunc(mouseMove);
 	glutSpecialFunc(specialKeys);
+	glutIdleFunc(idleCallback);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
