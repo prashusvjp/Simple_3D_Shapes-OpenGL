@@ -7,14 +7,13 @@ struct GLPoint {
 	GLfloat x, y, z;
 };
 
-GLuint index = 0,cxs=0,cys=0,czs=1,sxs=1,sys=0,szs=0, dxs = 0, dys = 0, dzs = 1,cstate=1,sstate=1,dstate=1,dyrots;
+GLuint index = 0,cxs=0,cys=0,czs=1,sxs=1,sys=0,szs=0,cstate=1,sstate=1,dstate=1;
 GLfloat window_width = 1024;
 GLfloat window_height = 720;
-GLfloat camx = 0, camy = 0, camz = 1, sScale = 1, cScale = 1, dScale = 1, angle = 0, bscale = 1.0,
-xrot = 0, yrot = 0, zrot = 0, xOrigin = -1, lx = 0, lz = 0, deltaAngle = 0, dxrot = 0, dyrot = 0, dzrot = 0, dyrots = 1, dzrots = 1,
-sxrot = 0, syrot = 0, szrot = 0,sxt=0.3,syt=0.4,szt=0.3,cxt=0,cyt=0,czt=0, dxt=-0.4,dyt=-0.4,dzt=0.2,
+GLfloat camx = 0, camy = 0, camz = 1, sScale = 1, cScale = 1,dScale=1, angle = 0, bscale = 1.0,
+xrot = 0, yrot = 0, zrot = 0, xOrigin = -1, lx = 0, lz = 0, deltaAngle = 0,
+sxrot = 0, syrot = 0, szrot = 0,sxt=0.3,syt=0.4,szt=0.3,cxt=0,cyt=0,czt=0,
 cxrot = 0, cyrot = 0, czrot = 0,ctheta=0,stheta=0,dtheta=0,cxrots=1,cyrots=1,sxrots=1,szrots=1;
-
 GLPoint rgb[3] = {
 		{1.0,0.0,0.0},
 		{0.8,0.4,0.0},
@@ -38,7 +37,6 @@ void handleKeys(unsigned char key, int x, int y) {
 		case 1:sxrot--; break;
 		case 2:cxrot--; break;
 		case 0:xrot--; break;
-		case 3:dxrot--; break;
 		}
 		break;
 	case 'X':
@@ -46,7 +44,6 @@ void handleKeys(unsigned char key, int x, int y) {
 		case 1:sxrot++; break;
 		case 2:cxrot++; break;
 		case 0:xrot++; break;
-		case 3:dxrot--; break;
 		}
 		break;
 	case 'y':
@@ -54,7 +51,6 @@ void handleKeys(unsigned char key, int x, int y) {
 		case 1:syrot--; break;
 		case 2:cyrot--; break;
 		case 0:yrot--; break;
-		case 3:dyrot--; break;
 		}
 		break;
 	case 'Y':
@@ -62,7 +58,6 @@ void handleKeys(unsigned char key, int x, int y) {
 		case 1:syrot++; break;
 		case 2:cyrot++; break;
 		case 0:yrot++; break;
-		case 3:dyrot--; break;
 		}
 		break;
 	case 'z':
@@ -70,7 +65,6 @@ void handleKeys(unsigned char key, int x, int y) {
 		case 1:szrot--; break;
 		case 2:czrot--; break;
 		case 0:zrot--; break;
-		case 3:dzrot--; break;
 		}
 		break;
 	case 'Z':
@@ -78,7 +72,6 @@ void handleKeys(unsigned char key, int x, int y) {
 		case 1:szrot++; break;
 		case 2:czrot++; break;
 		case 0:zrot++; break;
-		case 3:dzrot--; break;
 		}
 		break;
 	case 'S':
@@ -157,6 +150,7 @@ void dodecahedronFace(GLPoint vertices[]) {
 	glColor3f(rgb[2].x, rgb[2].y, rgb[2].z);
 	drawTriangle(vertices[0], vertices[4], vertices[2]);
 }
+
 
 void dodecahedron() {
 	GLPoint vertices[12][5] = { {
@@ -251,7 +245,9 @@ void dodecahedron() {
 		dodecahedronFace(vertices[i]);
 }
 
-void cuboidFace(GLPoint point1, GLPoint point2, GLPoint point3, GLPoint point4) {
+
+
+void Face(GLPoint point1, GLPoint point2, GLPoint point3, GLPoint point4) {
 	glColor3f(1.0, 0.3, 0.3);
 	drawTriangle(point1, point4, point3);
 
@@ -272,12 +268,12 @@ void cuboid() {
 	};
 
 
-	cuboidFace(points[0], points[1], points[2], points[3]); //Front Face
-	cuboidFace(points[0], points[4], points[5], points[3]); //Left Face
-	cuboidFace(points[4], points[6], points[7], points[5]); //Rear face
-	cuboidFace(points[1], points[6], points[7], points[2]); //Right face
-	cuboidFace(points[4], points[6], points[1], points[0]); //Top face
-	cuboidFace(points[5], points[7], points[2], points[3]); //Bottom face
+	Face(points[0], points[1], points[2], points[3]); //Front Face
+	Face(points[0], points[4], points[5], points[3]); //Left Face
+	Face(points[4], points[6], points[7], points[5]); //Rear face
+	Face(points[1], points[6], points[7], points[2]); //Right face
+	Face(points[4], points[6], points[1], points[0]); //Top face
+	Face(points[5], points[7], points[2], points[3]); //Bottom face
 }
 
 void squarePyramid() {
@@ -407,11 +403,13 @@ void display() {
 
 		glPushMatrix();
 			glScalef(dScale, dScale, dScale);
-			glRotatef(dtheta, 0, dyrots, dzrots);
-			glTranslatef(dxt, dyt, dzt);
-			glRotatef(dxrot, 1, 0, 0);
-			glRotatef(dyrot, 0, 1, 0);
-			glRotatef(dzrot, 0, 0, 1);
+			glRotatef(dtheta, cxrots, cyrots, 0);
+			/*glTranslatef(cxt, cyt, czt);
+			
+			
+			glRotatef(cxrot, 1, 0, 0);
+			glRotatef(cyrot, 0, 1, 0);
+			glRotatef(czrot, 0, 0, 1);*/
 			glStencilFunc(GL_ALWAYS, 3, 0xFF);
 			dodecahedron();
 		glPopMatrix();
@@ -434,13 +432,6 @@ void mouseMove(int x, int y) {
 		camz = -cos(angle + deltaAngle);
 		glutPostRedisplay();
 	}
-}
-
-GLint isInsideSphere(int x, int y, int z) {
-	GLint x1 = pow((x - 0.1), 2);
-	GLint y1 = pow((y - 0), 2);
-	GLint z1 = pow((z - 0), 2);
-	return x1 + y1 + z1;
 }
 
 void computeForCuboid() {
@@ -470,7 +461,11 @@ void computeForSquarePyramid() {
 		stheta += 0.05;
 		if (stheta > 360)
 			stheta = 0;
-		if (isInsideSphere(sxt,syt,szt) < bscale*bscale) {
+		GLint x1 = pow((sxt - 0.1), 2);
+		GLint y1 = pow((syt - 0), 2);
+		GLint z1 = pow((szt - 0), 2);
+		GLint result = x1 + y1 + z1;
+		if (result < bscale*bscale) {
 			sxt = getDirections(sxt, 1, 1);
 			syt = getDirections(syt, 1, 2);
 			szt = getDirections(szt, 1, 3);
@@ -488,16 +483,6 @@ void computeForDodecahedron() {
 		dtheta += 0.05;
 		if (dtheta > 360)
 			dtheta = 0;
-		if (isInsideSphere(dxt, dyt, dzt) < bscale * bscale) {
-			sxt = getDirections(sxt, 1, 1);
-			syt = getDirections(syt, 1, 2);
-			szt = getDirections(szt, 1, 3);
-		}
-		else {
-			sxt = getOppositeDirections(sxt, 1, 1);
-			syt = getOppositeDirections(syt, 1, 2);
-			szt = getOppositeDirections(szt, 1, 3);
-		}
 	}
 }
 
