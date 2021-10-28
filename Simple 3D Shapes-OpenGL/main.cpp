@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <random>
 #include <gl/glut.h>
 #include <cstdlib>
 
@@ -13,7 +12,7 @@ GLfloat window_height = 720;
 GLfloat camx = 0, camy = 0, camz = 1, sScale = 1, cScale = 1, angle = 0, bscale = 1.0,
 xrot = 0, yrot = 0, zrot = 0, xOrigin = -1, lx = 0, lz = 0, deltaAngle = 0,
 sxrot = 0, syrot = 0, szrot = 0, sxt=0.3, syt=0.4, szt=0.3, sxrots = 1, szrots = 1,
-cxrot = 0, cyrot = 0, czrot = 0,ctheta=0,stheta=0,dtheta=0,cxrots=1,cyrots=1,cxt = 0.5, cyt = -0.4, czt = 0;
+cxrot = 0, cyrot = 0, czrot = 0,ctheta=0,stheta=0,cxrots=1,cyrots=1,cxt = 0.5, cyt = -0.4, czt = 0;
 
 void specialKeys(int key, int x, int y) {
 	switch (key) {
@@ -328,8 +327,8 @@ void display() {
 		glRotatef(xrot, 1, 0, 0);
 		glRotatef(yrot, 0, 1, 0);
 		glRotatef(zrot, 0, 0, 1);
-
 		glPushMatrix();
+			
 			glTranslatef(sxt, syt, szt);
 			glScalef(sScale, sScale, sScale);
 			glRotatef(stheta, sxrots, 0, szrots);
