@@ -24,50 +24,33 @@ void specialKeys(int key, int x, int y) {
 	glutPostRedisplay();
 }
 
+void incOrDecValues(int index,int op,GLfloat *p1, GLfloat *p2,GLfloat *p3) {
+	switch (index) {
+		case 0:*p1+=op; break;
+		case 1:*p2+=op; break;
+		case 2:*p3+=op; break;
+	}
+}
+
+
 void handleKeys(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'x':
-		switch (index) {
-		case 1:sxrot--; break;
-		case 2:cxrot--; break;
-		case 0:xrot--; break;
-		}
+		incOrDecValues(index, -1, &xrot, &sxrot, &cxrot);
 		break;
 	case 'X':
-		switch (index) {
-		case 1:sxrot++; break;
-		case 2:cxrot++; break;
-		case 0:xrot++; break;
-		}
+		incOrDecValues(index,1,&xrot, &sxrot, &cxrot);
 		break;
 	case 'y':
-		switch (index) {
-		case 1:syrot--; break;
-		case 2:cyrot--; break;
-		case 0:yrot--; break;
-		}
+		incOrDecValues(index, -1, &yrot, &syrot, &cyrot);
 		break;
 	case 'Y':
-		switch (index) {
-		case 1:syrot++; break;
-		case 2:cyrot++; break;
-		case 0:yrot++; break;
-		}
-		break;
+		incOrDecValues(index,1, &yrot, &syrot, &cyrot);
 	case 'z':
-		switch (index) {
-		case 1:szrot--; break;
-		case 2:czrot--; break;
-		case 0:zrot--; break;
-		}
+		incOrDecValues(index, -1, &zrot, &szrot, &czrot);
 		break;
 	case 'Z':
-		switch (index) {
-		case 1:szrot++; break;
-		case 2:czrot++; break;
-		case 0:zrot++; break;
-		}
-		break;
+		incOrDecValues(index, 1, &zrot, &szrot, &czrot);
 	case 'S':
 		if (index == 1 && sScale < 3)
 			sScale += 0.5;
