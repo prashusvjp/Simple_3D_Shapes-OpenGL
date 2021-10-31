@@ -89,7 +89,7 @@ void handleKeys(unsigned char key, int x, int y) {
 }
 
 void onMouse(int button, int state, int x, int y) {
-	if (state == GLUT_DOWN && button == 0) {
+	if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON) {
 		glReadPixels(x, window_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
 		if (index == 1) 
 			sstate = !sstate;
@@ -111,17 +111,17 @@ void onMouse(int button, int state, int x, int y) {
 
 void drawTriangle(GLPoint point1, GLPoint point2, GLPoint point3) {
 	glBegin(GL_TRIANGLES);
-	glVertex3f(point1.x, point1.y, point1.z);
-	glVertex3f(point2.x, point2.y, point2.z);
-	glVertex3f(point3.x, point3.y, point3.z);
+		glVertex3f(point1.x, point1.y, point1.z);
+		glVertex3f(point2.x, point2.y, point2.z);
+		glVertex3f(point3.x, point3.y, point3.z);
 	glEnd();
 
 	glColor3f(0, 0, 0);
-	glPointSize(5.0);
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(point1.x, point1.y, point1.z);
-	glVertex3f(point2.x, point2.y, point2.z);
-	glVertex3f(point3.x, point3.y, point3.z);
+		glPointSize(5.0);
+		glBegin(GL_LINE_LOOP);
+		glVertex3f(point1.x, point1.y, point1.z);
+		glVertex3f(point2.x, point2.y, point2.z);
+		glVertex3f(point3.x, point3.y, point3.z);
 	glEnd();
 }
 
@@ -257,7 +257,7 @@ void mouseMove(int x, int y) {
 }
 
 GLint isInsideSphere(int x, int y, int z) {
-	GLint x1 = pow((x - 0.1), 2);
+	GLint x1 = pow((x - 0), 2);
 	GLint y1 = pow((y - 0), 2);
 	GLint z1 = pow((z - 0), 2);
 	return x1 + y1 + z1;
@@ -320,15 +320,17 @@ void display() {
 	glClearStencil(0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glPushMatrix();
-		glLoadIdentity();
 		glTranslatef(0.0, 0.0, -5.0);
 		gluLookAt(camx, camy, camz, 0, 0, 0, 0, 1, 0);
 		glRotatef(90, 0, 1, 0);
 		glRotatef(xrot, 1, 0, 0);
 		glRotatef(yrot, 0, 1, 0);
 		glRotatef(zrot, 0, 0, 1);
+		glScalef(bscale, bscale, bscale);
+		glColor3f(1, 1, 1);
+		glStencilFunc(GL_ALWAYS, 3, 0xFF);
+		glutWireSphere(1.5, 13, 10);
 		glPushMatrix();
-			
 			glTranslatef(sxt, syt, szt);
 			glScalef(sScale, sScale, sScale);
 			glRotatef(stheta, sxrots, 0, szrots);
@@ -350,11 +352,6 @@ void display() {
 			cuboid();
 		glPopMatrix();
 
-		glScalef(bscale, bscale, bscale);
-		glColor3f(1, 0, 0);
-		glColor3f(1, 1, 1);
-		glStencilFunc(GL_ALWAYS, 3, 0xFF);
-		glutWireSphere(1.5, 13, 10);
 	glPopMatrix();
 
 	glutSwapBuffers();
@@ -370,9 +367,10 @@ int main(int argc, char* argv[])
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE | GL_STENCIL_BUFFER_BIT);
 	glColor3f(0.5, 0.5, 0.5);
 	glClearColor(0, 0, 0, 1);
-	glutCreateWindow("Fundamentals of Virtual and Augmented Reality- Assignment 1");
+	glutCreateWindow("Simple 3D shapes using OpenGL");
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
+
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 
@@ -385,10 +383,7 @@ int main(int argc, char* argv[])
 	glutSpecialFunc(specialKeys);
 	glutIdleFunc(idleCallback);
 
-	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
-	glPointSize(1.0);
-
 	glutMainLoop();
 }
