@@ -213,9 +213,9 @@ void computeForCuboid() {
 		if (ctheta > 360)
 			ctheta = 0;
 		if (isInsideSphere(cxt,cyt,czt) < bscale*bscale) {
-			(cxs) ? cxt++ : cxt--;
-			(cys) ? cyt ++ : cyt--;
-			(czs) ? czt++ : czt--;
+			(cxs) ? cxt+=0.001 : cxt-=0.001;
+			(cys) ? cyt+=0.001 : cyt-=0.001;
+			(czs) ? czt+= 0.001 : czt-= 0.001;
 		}
 		else {
 			cxt = getOppositeDirections(cxt, 2, 1);
@@ -231,9 +231,9 @@ void computeForSquarePyramid() {
 		if (stheta > 360)
 			stheta = 0;
 		if (isInsideSphere(sxt,syt,szt) < bscale*bscale) {
-			(sxs) ? sxt++ : sxt--;
-			(sys) ? syt++ : syt--;
-			(szs) ? szt++ : szt--;
+			(sxs) ? sxt+= 0.001 : sxt-= 0.001;
+			(sys) ? syt+= 0.001 : syt-= 0.001;
+			(szs) ? szt+= 0.001 : szt-= 0.001;
 		}
 		else {
 			sxt = getOppositeDirections(sxt, 1, 1);
