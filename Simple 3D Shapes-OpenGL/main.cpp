@@ -166,45 +166,6 @@ void squarePyramid() {
 
 }
 
-GLfloat getDirections(GLfloat p,int index, int axis) {
-	switch (index) {
-	case 1:
-		if (axis == 1)
-			if (sxs)
-				return p + 0.001;
-			else
-				return p - 0.001;
-		else if(axis == 2)
-			if (sys)
-				return p + 0.001;
-			else
-				return p - 0.001;
-		else
-			if (szs)
-				return p + 0.001;
-			else
-				return p - 0.001;
-		break;
-	case 2:
-		if (axis == 1)
-			if (cxs)
-				return p + 0.001;
-			else
-				return p - 0.001;
-		else if (axis == 2)
-			if (cys)
-				return p + 0.001;
-			else
-				return p - 0.001;
-		else
-			if (czs)
-				return p + 0.0001;
-			else
-				return p - 0.0001;
-		break;
-	}
-}
-
 GLfloat getOppositeDirections(GLfloat p,int index,int axis) {
 	switch (index) {
 	case 1:
@@ -252,9 +213,9 @@ void computeForCuboid() {
 		if (ctheta > 360)
 			ctheta = 0;
 		if (isInsideSphere(cxt,cyt,czt) < bscale*bscale) {
-			cxt = getDirections(cxt, 2, 1);
-			cyt = getDirections(cxt, 2, 2);
-			czt = getDirections(czt, 2, 3);
+			(cxs) ? cxt++ : cxt--;
+			(cys) ? cyt ++ : cyt--;
+			(czs) ? czt++ : czt--;
 		}
 		else {
 			cxt = getOppositeDirections(cxt, 2, 1);
@@ -270,9 +231,9 @@ void computeForSquarePyramid() {
 		if (stheta > 360)
 			stheta = 0;
 		if (isInsideSphere(sxt,syt,szt) < bscale*bscale) {
-			sxt = getDirections(sxt, 1, 1);
-			syt = getDirections(syt, 1, 2);
-			szt = getDirections(szt, 1, 3);
+			(sxs) ? sxt++ : sxt--;
+			(sys) ? syt++ : syt--;
+			(szs) ? szt++ : szt--;
 		}
 		else {
 			sxt = getOppositeDirections(sxt, 1, 1);
