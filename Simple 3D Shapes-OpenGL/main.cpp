@@ -285,7 +285,6 @@ void display() {
 
 int main(int argc, char* argv[])
 {
-	
 	glutInit(&argc, argv);
 	glutInitWindowSize(1024, 720);
 	glutInitWindowPosition(250, 50);
@@ -304,8 +303,6 @@ int main(int argc, char* argv[])
 	glutMotionFunc(mouseMove);
 	glutSpecialFunc(specialKeys);
 	glutIdleFunc(idleCallback);
-
-	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	glutMainLoop();
 }
