@@ -6,7 +6,7 @@ struct GLPoint {
 	GLfloat x, y, z;
 };
 
-GLuint index = 0,cxs=0,cys=0,czs=1,sxs=1,sys=0,szs=0,cstate=1,sstate=1;
+int index = 0,cxs=0,cys=0,czs=1,sxs=1,sys=0,szs=0,cstate=1,sstate=1;
 GLfloat window_width = 1024;
 GLfloat window_height = 720;
 GLfloat camx = 0, camy = 0, camz = 1, sScale = 1, cScale = 1, angle = 0, bscale = 1.0,
@@ -166,29 +166,9 @@ void squarePyramid() {
 
 }
 
-GLfloat getOppositeDirections(GLfloat p,int index,int axis) {
-	switch (index) {
-	case 1:
-		if (axis == 1)
-			sxs = !sxs;
-		else if (axis == 2)
-			sys = !sys;
-		else
-			szs = !szs;
-		break;
-	case 2:
-		if (axis == 1)
-			cxs = !cxs;
-		else if (axis == 2)
-			cys = !cys;
-		else
-			czs = !czs;
-		break;
-	}
-	if (p <= 0)
-		return p + 0.001;
-	else
-		return p - 0.001;
+GLfloat getOppositeDirections(GLfloat p,int *state) {
+	*state = !(* state);
+	return (p <= 0) ? p += 0.001 : p -= 0.001;
 }
 
 void mouseMove(int x, int y) {
@@ -218,9 +198,9 @@ void computeForCuboid() {
 			(czs) ? czt+= 0.001 : czt-= 0.001;
 		}
 		else {
-			cxt = getOppositeDirections(cxt, 2, 1);
-			cyt = getOppositeDirections(cyt, 2, 2);
-			czt = getOppositeDirections(czt, 2, 3);
+			cxt = getOppositeDirections(cxt,&cxs);
+			cyt = getOppositeDirections(cyt,&cys);
+			czt = getOppositeDirections(czt,&czs);
 		}
 	}
 }
@@ -236,9 +216,9 @@ void computeForSquarePyramid() {
 			(szs) ? szt+= 0.001 : szt-= 0.001;
 		}
 		else {
-			sxt = getOppositeDirections(sxt, 1, 1);
-			syt = getOppositeDirections(syt, 1, 2);
-			szt = getOppositeDirections(szt, 1, 3);
+			sxt = getOppositeDirections(sxt,&sxs);
+			syt = getOppositeDirections(syt,&sys);
+			szt = getOppositeDirections(szt,&szs);
 		}
 	}
 }
@@ -274,6 +254,7 @@ void display() {
 		glColor3f(1, 1, 1);
 		glStencilFunc(GL_ALWAYS, 3, 0xFF);
 		glutWireSphere(1.5, 13, 10);
+
 		glPushMatrix();
 			glTranslatef(sxt, syt, szt);
 			glScalef(sScale, sScale, sScale);
@@ -314,10 +295,7 @@ int main(int argc, char* argv[])
 	glutCreateWindow("Simple 3D shapes using OpenGL");
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
-
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-
 
 	glutDisplayFunc(display);
 	glutKeyboardFunc(handleKeys);
