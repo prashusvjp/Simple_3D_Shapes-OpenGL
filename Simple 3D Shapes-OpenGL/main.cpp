@@ -10,7 +10,7 @@ int index = 0,cxs=0,cys=0,czs=1,sxs=1,sys=0,szs=0,cstate=1,sstate=1;
 GLfloat window_width = 1024;
 GLfloat window_height = 720;
 GLfloat camx = 0, camy = 0, camz = 1, sScale = 1, cScale = 1, angle = 0, bscale = 1.0,
-xrot = 0, yrot = 0, zrot = 0, xOrigin = -1, lx = 0, lz = 0, deltaAngle = 0,
+xrot = 0, yrot = 0, zrot = 0, xOrigin = -1, deltaAngle = 0,
 sxrot = 0, syrot = 0, szrot = 0, sxt=0.3, syt=0.4, szt=0.3, sxrots = 1, szrots = 1,
 cxrot = 0, cyrot = 0, czrot = 0,ctheta=0,stheta=0,cxrots=1,cyrots=1,cxt = 0.5, cyt = -0.4, czt = 0;
 
@@ -85,11 +85,9 @@ void onMouse(int button, int state, int x, int y) {
 			angle += deltaAngle;
 			xOrigin = -1;
 		}
-		else {
-			xOrigin = x;
-		}
+		else
+		        xOrigin = x;
 	}
-
 }
 
 void drawTriangle(GLPoint point1, GLPoint point2, GLPoint point3) {
@@ -128,7 +126,6 @@ void cuboid() {
 		{0.2,-0.12,-0.2}
 	};
 
-
 	cuboidFace(points[0], points[1], points[2], points[3]); //Front Face
 	cuboidFace(points[0], points[4], points[5], points[3]); //Left Face
 	cuboidFace(points[4], points[6], points[7], points[5]); //Rear face
@@ -163,7 +160,6 @@ void squarePyramid() {
 
 	glColor3f(0.5, 0.3, 1.0);
 	drawTriangle(points[0], points[1], points[4]);
-
 }
 
 GLfloat getOppositeDirections(GLfloat p,int *state) {
@@ -276,11 +272,9 @@ void display() {
 			glStencilFunc(GL_ALWAYS, 2, 0xFF);
 			cuboid();
 		glPopMatrix();
-
 	glPopMatrix();
 
 	glutSwapBuffers();
-
 }
 
 int main(int argc, char* argv[])
